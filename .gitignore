@@ -7,7 +7,7 @@
 /package-lock.json
 /yarn.lock
 # production
-/dist
+packages/**/dist
 .cache
 # misc
 .DS_Store
