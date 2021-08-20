@@ -9,6 +9,7 @@
 # production
 packages/**/dist
 .cache
+dist
 # misc
 .DS_Store
 

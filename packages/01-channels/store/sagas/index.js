@@ -6,11 +6,11 @@ import {
   actionChannel,
   take,
   fork,
+  all,
 } from "redux-saga/effects";
 
 function* increaseDelay() {
   yield delay(1000);
-  console.log('put({ type: "INCREASE" });');
   yield put({ type: "INCREASE" });
 }
 
@@ -19,23 +19,38 @@ function* saga1() {
   const channel = yield actionChannel("INCREASE_DELAY");
   while (true) {
     // 2- take from the channel
-    const { payload } = yield take(channel);
+    const mes = yield take(channel);
     // 3- Note that we're using a blocking call
-    yield call(increaseDelay, payload);
+    yield call(increaseDelay, mes.payload);
   }
 }
 
 function* saga2() {
   while (true) {
     yield take("INCREASE_DELAY2");
-    console.log("INCREASE_DELAY2");
-    yield call(increaseDelay);
+    // yield call(increaseDelay);
+    console.log(1);
+    try {
+      const result = yield all([
+        Promise.reject(new Error()),
+        call(increaseDelay),
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+    console.log(123);
   }
+}
+
+function* saga3() {
+  const result = yield delay(500, 123);
+  console.log(result);
 }
 
 function* rootSaga() {
   yield fork(saga1);
   yield fork(saga2);
+  yield fork(saga3);
 }
 
 export default rootSaga;

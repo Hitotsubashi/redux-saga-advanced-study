@@ -32371,7 +32371,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.INCREASE_DELAY = void 0;
+exports.INCREASE_DELAY2 = exports.INCREASE_DELAY = void 0;
 
 var INCREASE_DELAY = function INCREASE_DELAY() {
   return {
@@ -32380,6 +32380,14 @@ var INCREASE_DELAY = function INCREASE_DELAY() {
 };
 
 exports.INCREASE_DELAY = INCREASE_DELAY;
+
+var INCREASE_DELAY2 = function INCREASE_DELAY2() {
+  return {
+    type: "INCREASE_DELAY2"
+  };
+};
+
+exports.INCREASE_DELAY2 = INCREASE_DELAY2;
 },{}],"components/App.jsx":[function(require,module,exports) {
 "use strict";
 
@@ -32400,7 +32408,9 @@ var App = function App(props) {
   var num = props.num;
   return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("button", {
     onClick: props.increaseDelay
-  }, "\u589E\u52A01"), /*#__PURE__*/_react.default.createElement("br", null), num);
+  }, "\u589E\u52A01"), /*#__PURE__*/_react.default.createElement("button", {
+    onClick: props.increaseDelay2
+  }, "\u589E\u52A01\u65B9\u5F0F\u4E8C"), /*#__PURE__*/_react.default.createElement("br", null), num);
 };
 
 var mapStateToProps = function mapStateToProps(state) {
@@ -32413,6 +32423,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
     increaseDelay: function increaseDelay() {
       return dispatch((0, _index.INCREASE_DELAY)());
+    },
+    increaseDelay2: function increaseDelay2() {
+      return dispatch((0, _index.INCREASE_DELAY2)());
     }
   };
 };
@@ -37150,7 +37163,10 @@ var _effects = require("redux-saga/effects");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _marked = /*#__PURE__*/_regenerator.default.mark(increaseDelay),
-    _marked2 = /*#__PURE__*/_regenerator.default.mark(saga);
+    _marked2 = /*#__PURE__*/_regenerator.default.mark(saga1),
+    _marked3 = /*#__PURE__*/_regenerator.default.mark(saga2),
+    _marked4 = /*#__PURE__*/_regenerator.default.mark(saga3),
+    _marked5 = /*#__PURE__*/_regenerator.default.mark(rootSaga);
 
 function increaseDelay() {
   return _regenerator.default.wrap(function increaseDelay$(_context) {
@@ -37174,10 +37190,9 @@ function increaseDelay() {
   }, _marked);
 }
 
-function saga() {
-  var channel, _yield$take, payload;
-
-  return _regenerator.default.wrap(function saga$(_context2) {
+function saga1() {
+  var channel, mes;
+  return _regenerator.default.wrap(function saga1$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -37189,7 +37204,7 @@ function saga() {
 
         case 3:
           if (!true) {
-            _context2.next = 12;
+            _context2.next = 11;
             break;
           }
 
@@ -37197,16 +37212,15 @@ function saga() {
           return (0, _effects.take)(channel);
 
         case 6:
-          _yield$take = _context2.sent;
-          payload = _yield$take.payload;
-          _context2.next = 10;
-          return (0, _effects.call)(increaseDelay, payload);
+          mes = _context2.sent;
+          _context2.next = 9;
+          return (0, _effects.call)(increaseDelay, mes.payload);
 
-        case 10:
+        case 9:
           _context2.next = 3;
           break;
 
-        case 12:
+        case 11:
         case "end":
           return _context2.stop();
       }
@@ -37214,7 +37228,96 @@ function saga() {
   }, _marked2);
 }
 
-var _default = saga;
+function saga2() {
+  var result;
+  return _regenerator.default.wrap(function saga2$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          if (!true) {
+            _context3.next = 16;
+            break;
+          }
+
+          _context3.next = 3;
+          return (0, _effects.take)("INCREASE_DELAY2");
+
+        case 3:
+          // yield call(increaseDelay);
+          console.log(1);
+          _context3.prev = 4;
+          _context3.next = 7;
+          return (0, _effects.all)([Promise.reject(new Error()), (0, _effects.call)(increaseDelay)]);
+
+        case 7:
+          result = _context3.sent;
+          _context3.next = 13;
+          break;
+
+        case 10:
+          _context3.prev = 10;
+          _context3.t0 = _context3["catch"](4);
+          console.log(_context3.t0);
+
+        case 13:
+          console.log(123);
+          _context3.next = 0;
+          break;
+
+        case 16:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  }, _marked3, null, [[4, 10]]);
+}
+
+function saga3() {
+  var result;
+  return _regenerator.default.wrap(function saga3$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.next = 2;
+          return (0, _effects.delay)(500, 123);
+
+        case 2:
+          result = _context4.sent;
+          console.log(result);
+
+        case 4:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  }, _marked4);
+}
+
+function rootSaga() {
+  return _regenerator.default.wrap(function rootSaga$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.next = 2;
+          return (0, _effects.fork)(saga1);
+
+        case 2:
+          _context5.next = 4;
+          return (0, _effects.fork)(saga2);
+
+        case 4:
+          _context5.next = 6;
+          return (0, _effects.fork)(saga3);
+
+        case 6:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  }, _marked5);
+}
+
+var _default = rootSaga;
 exports.default = _default;
 },{"@babel/runtime/regenerator":"../../node_modules/@babel/runtime/regenerator/index.js","redux-saga/effects":"../../node_modules/redux-saga/dist/redux-saga-effects-npm-proxy.esm.js"}],"store/index.js":[function(require,module,exports) {
 "use strict";
@@ -37230,16 +37333,16 @@ var _reduxSaga = _interopRequireDefault(require("redux-saga"));
 
 var _reducer = _interopRequireDefault(require("./reducer"));
 
-var _sagas = _interopRequireDefault(require("./sagas"));
+var _index = _interopRequireDefault(require("./sagas/index"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var sagaMiddleware = (0, _reduxSaga.default)();
 var store = (0, _redux.createStore)(_reducer.default, (0, _redux.applyMiddleware)(sagaMiddleware));
-sagaMiddleware.run(_sagas.default);
+sagaMiddleware.run(_index.default);
 var _default = store;
 exports.default = _default;
-},{"redux":"../../node_modules/redux/es/redux.js","redux-saga":"../../node_modules/redux-saga/dist/redux-saga-core-npm-proxy.esm.js","./reducer":"store/reducer/index.js","./sagas":"store/sagas/index.js"}],"index.jsx":[function(require,module,exports) {
+},{"redux":"../../node_modules/redux/es/redux.js","redux-saga":"../../node_modules/redux-saga/dist/redux-saga-core-npm-proxy.esm.js","./reducer":"store/reducer/index.js","./sagas/index":"store/sagas/index.js"}],"index.jsx":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -37285,7 +37388,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53637" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55171" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
