@@ -8,6 +8,7 @@ import {
   fork,
   all,
   race,
+  cancel,
 } from "redux-saga/effects";
 
 function timeout(sec, err = false) {
@@ -45,16 +46,21 @@ function* fetchAllWithTimeout() {
 }
 
 function* fetchAllWithDelay() {
-  yield fork(delayTimeout, 2, true);
-  yield fork(delayTimeout, 3);
-  console.log("fetchAllWithDelay finishs");
+  try {
+    yield fork(delayTimeout, 2, true);
+    yield fork(delayTimeout, 3);
+    console.log("fetchAllWithDelay finishs");
+  } catch (error) {
+    console.log("Error from fetchAllWithDelay", error);
+  }
 }
 
 function* errorSageWithDelay() {
   try {
     yield call(fetchAllWithDelay);
+    yield fetchAllWithDelay();
   } catch (error) {
-    console.log(error);
+    console.log("error from errorSageWithDelay", error);
   }
 }
 
@@ -66,8 +72,20 @@ function* errorSageWithTimeout() {
   }
 }
 
+function* fetchAllWithCancel() {
+  yield fork(delayTimeout, 2);
+  yield fork(delayTimeout, 3);
+  yield delay(3 * 1000);
+  console.log("3s go away ");
+}
+
+function* cancelSaga() {
+  const task = yield fork(fetchAllWithCancel);
+  yield cancel(task);
+}
+
 function* rootSaga() {
-  yield fork(errorSageWithTimeout);
+  yield fork(cancelSaga);
 }
 
 export default rootSaga;
