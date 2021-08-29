@@ -42,23 +42,24 @@ function* raceSaga() {
 function* fetchAllWithTimeout() {
   yield fork(timeout, 2, true);
   yield fork(timeout, 3);
+  yield delay(4000)
   console.log("fetchAllWithTimeout finishs");
 }
 
 function* fetchAllWithDelay() {
-  try {
-    yield fork(delayTimeout, 2, true);
+  // try {
+    yield fork(delayTimeout, 2,true);
     yield fork(delayTimeout, 3);
+    yield delay(4000)
     console.log("fetchAllWithDelay finishs");
-  } catch (error) {
-    console.log("Error from fetchAllWithDelay", error);
-  }
+  // } catch (error) {
+  //   console.log("Error from fetchAllWithDelay", error);
+  // }
 }
-
+// Error Propagation #1
 function* errorSageWithDelay() {
   try {
     yield call(fetchAllWithDelay);
-    yield fetchAllWithDelay();
   } catch (error) {
     console.log("error from errorSageWithDelay", error);
   }
@@ -75,8 +76,8 @@ function* errorSageWithTimeout() {
 function* fetchAllWithCancel() {
   yield fork(delayTimeout, 2);
   yield fork(delayTimeout, 3);
-  yield delay(3 * 1000);
-  console.log("3s go away ");
+  yield delay(4 * 1000);
+  console.log("fetchAllWithCancel finish");
 }
 
 function* cancelSaga() {
@@ -85,7 +86,12 @@ function* cancelSaga() {
 }
 
 function* rootSaga() {
-  yield fork(cancelSaga);
+  try {
+    yield call(cancelSaga);
+  } catch (error) {
+    console.log('error from root',error);
+  }
+  console.log('root finish');
 }
 
 export default rootSaga;
